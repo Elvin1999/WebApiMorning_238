@@ -26,7 +26,7 @@ namespace WebApiMorning.Controllers
         [HttpGet("{id}")]
         public ActionResult<Player> Get(int id)
         {
-            var player=players.FirstOrDefault(x => x.Id == id);
+            var player = players.FirstOrDefault(x => x.Id == id);
             if (player == null)
             {
                 return NotFound($"player does not exist with this id {id}");
@@ -36,20 +36,40 @@ namespace WebApiMorning.Controllers
 
         // POST api/<PlayerController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<Player> Post([FromBody] Player newPlayer)
         {
+            newPlayer.Id = players.Any() ? players.Max(p => p.Id) + 1 : 1;
+            players.Add(newPlayer);
+            return CreatedAtAction(nameof(Get), new { id = newPlayer.Id }, newPlayer);
         }
 
         // PUT api/<PlayerController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActionResult Put(int id, [FromBody] Player updatedPlayer)
         {
+            var player = players.FirstOrDefault(p => p.Id == id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            player.City = updatedPlayer.City;
+            player.PlayerName = updatedPlayer.PlayerName;
+            player.Score = updatedPlayer.Score;
+            return NoContent();
         }
 
         // DELETE api/<PlayerController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            var player=players.FirstOrDefault(x => x.Id == id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+            players.Remove(player);
+            return NoContent(); 
         }
     }
 }
