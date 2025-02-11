@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApiMorning.Dtos;
 using WebApiMorning.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,30 +18,49 @@ namespace WebApiMorning.Controllers
 
         // GET: api/<PlayerController>
         [HttpGet]
-        public ActionResult<IEnumerable<Player>> Get()
+        public ActionResult<IEnumerable<PlayerDto>> Get()
         {
-            return Ok(players);
+            var playersToReturn = players.Select(p => new PlayerDto
+            {
+                City = p.City,
+                PlayerName = p.PlayerName,
+                Score = p.Score,
+            });
+            return Ok(playersToReturn);
         }
 
         // GET api/<PlayerController>/5
         [HttpGet("{id}")]
-        public ActionResult<Player> Get(int id)
+        public ActionResult<PlayerDto> Get(int id)
         {
             var player = players.FirstOrDefault(x => x.Id == id);
             if (player == null)
             {
                 return NotFound($"player does not exist with this id {id}");
             }
-            return Ok(player);
+            var playerToReturn = new PlayerDto
+            {
+                City=player.City,
+                PlayerName=player.PlayerName,
+                Score=player.Score,
+            };
+            return Ok(playerToReturn);
         }
 
         // POST api/<PlayerController>
         [HttpPost]
-        public ActionResult<Player> Post([FromBody] Player newPlayer)
+        public ActionResult<PlayerAddDto> Post([FromBody] PlayerAddDto player)
         {
+            var newPlayer = new Player
+            {
+                PlayerName = player.PlayerName,
+                Score = player.Score,
+            };
             newPlayer.Id = players.Any() ? players.Max(p => p.Id) + 1 : 1;
             players.Add(newPlayer);
-            return CreatedAtAction(nameof(Get), new { id = newPlayer.Id }, newPlayer);
+            //return Created(); //201 without object
+            //return Ok(newPlayer); //200 with object
+            return CreatedAtAction(nameof(Get), new { id = newPlayer.Id }, player);
         }
 
         // PUT api/<PlayerController>/5
