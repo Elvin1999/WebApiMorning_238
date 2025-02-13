@@ -38,6 +38,21 @@ namespace WebApiMorning.Controllers
             return dataToReturn;
         }
 
+        [HttpGet("{id}")]
+        public async Task<StudentDto> Get(int id)
+        {
+            var item = await _studentRepository.Get(s=>s.Id==id);
+            var dataToReturn =  new StudentDto
+            {
+                Id = item.Id,
+                Age = item.Age,
+                Fullname = item.Fullname,
+                Score = item.Score,
+                SeriaNo = item.SeriaNo,
+            };
+            return dataToReturn;
+        }
+
         [HttpPost]
         public async Task<ActionResult<StudentAddDto>> Post([FromBody] StudentAddDto dto)
         {

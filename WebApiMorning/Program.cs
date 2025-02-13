@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiMorning.Data;
+using WebApiMorning.Formatters;
 using WebApiMorning.Repositories.Abstract;
 using WebApiMorning.Repositories.Concrete;
 
@@ -7,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.OutputFormatters.Insert(0, new VCardOutputFormatter()); 
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
