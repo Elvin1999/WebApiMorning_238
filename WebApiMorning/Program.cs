@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiMorning.Data;
 using WebApiMorning.Formatters;
+using WebApiMorning.Middlewares;
 using WebApiMorning.Repositories.Abstract;
 using WebApiMorning.Repositories.Concrete;
 
@@ -26,6 +27,9 @@ builder.Services.AddDbContext<StudentDbContext>(opt =>
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalErrorHandlerMiddleware>();
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -34,6 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
