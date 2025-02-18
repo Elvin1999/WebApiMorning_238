@@ -26,6 +26,18 @@ namespace WebApiMorning.Middlewares
             if (token != null)
             {
                 var principal = ValidateToken(token);
+                if (principal != null)
+                {
+                    var fullnameItem = principal.Claims.FirstOrDefault(c => c.Type == "Fullname");
+                    context.Items["User"] = new { Name= principal.Identity?.Name ,Fullname=fullnameItem.Value};
+                }
+                else
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await context.Response.WriteAsync("Unauthorized");
+                    return;
+                }
+
             }
             else
             {
